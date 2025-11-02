@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MenuController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,9 +15,9 @@ use App\Http\Controllers\AuthController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 
 // Auth
@@ -29,3 +30,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth');
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware('auth');
+
+
+Route::get('/', [MenuController::class, 'index'])->name('menu.index');
+Route::get('/menu/{id}', [MenuController::class, 'show'])->name('menu.show');

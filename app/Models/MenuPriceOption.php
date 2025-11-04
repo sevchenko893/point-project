@@ -32,4 +32,6 @@ class MenuPriceOption extends Model
         return $query->where('temperature', $temperature)
                      ->where('size', $size);
     }
+
+    
 }

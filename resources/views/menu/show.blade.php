@@ -1,155 +1,101 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Menu</title>
-    <style>
-    body {
-        font-family: Arial, sans-serif;
-    }
-
-    .menu-detail {
-        border: 1px solid #000;
-        padding: 20px;
-        width: 400px;
-        margin: 20px auto;
-    }
-
-    .menu-detail h2 {
-        margin: 0 0 10px 0;
-    }
-
-    .menu-detail p {
-        margin: 5px 0;
-    }
-
-    .back-link {
-        margin-top: 10px;
-        display: inline-block;
-    }
-
-    .form-group {
-        margin: 10px 0;
-    }
-
-    label {
-        display: block;
-        margin-bottom: 3px;
-    }
-
-    select {
-        width: 100%;
-        padding: 5px;
-    }
-
-    .price {
-        font-weight: bold;
-        margin-top: 10px;
-    }
-
-    button {
-        margin-top: 10px;
-        padding: 10px;
-        width: 100%;
-        cursor: pointer;
-    }
-    </style>
-</head>
-
-<body>
-    <div class="menu-detail">
-        <h2>{{ $menu->name }}</h2>
-        <p>Deskripsi: {{ $menu->description ?? '-' }}</p>
+@section('content')
+<div class="container mt-4">
+    <div class="menu-detail p-4 rounded shadow-sm bg-white mx-auto" style="max-width:500px;">
+        <h2 class="fw-bold text-dark">{{ $menu->name }}</h2>
+        <p class="text-muted">Deskripsi: {{ $menu->description ?? '-' }}</p>
 
         <form id="menuForm" method="POST" action="{{ route('cart.add') }}">
             @csrf
             <input type="hidden" name="menu_id" value="{{ $menu->id }}">
             <input type="hidden" id="priceInput" name="price" value="{{ $menu->price }}">
 
-            <div class="form-group">
-                <label for="temperature">Temperature</label>
-                <select id="temperature" name="temperature">
-                    @foreach($menu->priceOptions->pluck('temperature')->unique() as $temp)
-                    <option value="{{ $temp }}">{{ ucfirst($temp) }}</option>
+            <div class="mb-3">
+                <label for="temperature" class="form-label">Temperature</label>
+                <select id="temperature" name="temperature" class="form-select">
+                    @foreach(optional($menu->priceOptions)->pluck('temperature')->unique() ?? [] as $temp)
+                        <option value="{{ $temp }}">{{ ucfirst($temp) }}</option>
                     @endforeach
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="size">Size</label>
-                <select id="size" name="size">
+            <div class="mb-3">
+                <label for="size" class="form-label">Size</label>
+                <select id="size" name="size" class="form-select">
                     @foreach($menu->priceOptions->pluck('size')->unique() as $size)
-                    <option value="{{ $size }}">{{ ucfirst($size) }}</option>
+                        <option value="{{ $size }}">{{ ucfirst($size) }}</option>
                     @endforeach
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="sugar_level">Sugar Level</label>
-                <select id="sugar_level" name="sugar_level">
+            <div class="mb-3">
+                <label for="sugar_level" class="form-label">Sugar Level</label>
+                <select id="sugar_level" name="sugar_level" class="form-select">
                     <option value="normal">Normal</option>
                     <option value="less">Less</option>
                     <option value="no">No Sugar</option>
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="quantity">Quantity</label>
-                <input type="number" id="quantity" name="quantity" value="1" min="1" style="width:100%;padding:5px;">
+            <div class="mb-3">
+                <label for="quantity" class="form-label">Quantity</label>
+                <input type="number" id="quantity" name="quantity" value="1" min="1" class="form-control">
             </div>
 
-            <p class="price">Harga: Rp <span id="price">{{ number_format($menu->price,0,',','.') }}</span></p>
+            <p class="fw-bold">Harga: Rp <span id="price">{{ number_format($menu->price,0,',','.') }}</span></p>
 
-            <button type="submit">Tambah ke Keranjang</button>
+            <button type="submit" class="btn btn-dark w-100">Tambah ke Keranjang</button>
         </form>
 
-        <div class="back-link">
-            <a href="{{ route('menu.index') }}">Kembali ke daftar menu</a>
+        <div class="mt-3 text-center">
+            <a href="{{ route('menu.index') }}" class="text-decoration-none">&larr; Kembali ke daftar menu</a>
         </div>
     </div>
+</div>
 
-    <script>
-    const priceOptions = [
-        @foreach($menu->priceOptions as $option) {
-            temperature: "{{ $option->temperature }}",
-            size: "{{ $option->size }}",
-            price: {
-                {
-                    $option->price
-                }
-            }
-        }
-        @if(!$loop->last), @endif
-        @endforeach
-    ];
+@push('styles')
+<style>
+.menu-detail {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.menu-detail:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
+</style>
+@endpush
 
-    const temperatureSelect = document.getElementById('temperature');
-    const sizeSelect = document.getElementById('size');
-    const quantityInput = document.getElementById('quantity');
-    const priceSpan = document.getElementById('price');
-    const priceInput = document.getElementById('priceInput');
+@push('scripts')
+<script>
+const priceOptions = [
+    @foreach($menu->priceOptions as $option)
+        {temperature: "{{ $option->temperature }}", size: "{{ $option->size }}", price: {{ $option->price }} }@if(!$loop->last),@endif
+    @endforeach
+];
 
-    function updatePrice() {
-        const temp = temperatureSelect.value;
-        const size = sizeSelect.value;
-        const quantity = parseInt(quantityInput.value) || 1;
+const temperatureSelect = document.getElementById('temperature');
+const sizeSelect = document.getElementById('size');
+const quantityInput = document.getElementById('quantity');
+const priceSpan = document.getElementById('price');
+const priceInput = document.getElementById('priceInput');
 
-        const option = priceOptions.find(o => o.temperature === temp && o.size === size);
-        if (option) {
-            const total = option.price * quantity;
-            priceSpan.textContent = total.toLocaleString('id-ID');
-            priceInput.value = total;
-        }
+function updatePrice() {
+    const temp = temperatureSelect.value;
+    const size = sizeSelect.value;
+    const quantity = parseInt(quantityInput.value) || 1;
+
+    const option = priceOptions.find(o => o.temperature === temp && o.size === size);
+    if(option){
+        const total = option.price * quantity;
+        priceSpan.textContent = total.toLocaleString('id-ID');
+        priceInput.value = total;
     }
+}
 
-    temperatureSelect.addEventListener('change', updatePrice);
-    sizeSelect.addEventListener('change', updatePrice);
-    quantityInput.addEventListener('input', updatePrice);
-    </script>
-
-
-</body>
-
-</html>
+temperatureSelect.addEventListener('change', updatePrice);
+sizeSelect.addEventListener('change', updatePrice);
+quantityInput.addEventListener('input', updatePrice);
+</script>
+@endpush
+@endsection

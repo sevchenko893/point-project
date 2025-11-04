@@ -30,4 +30,9 @@ class Menu extends Model
     {
         return $this->hasMany(TransactionItem::class);
     }
+
+    public function priceOptions()
+    {
+        return $this->hasMany(MenuPriceOption::class);
+    }
 }

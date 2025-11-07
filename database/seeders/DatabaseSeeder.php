@@ -22,8 +22,10 @@ class DatabaseSeeder extends Seeder
         // ]);
         $this->call([
             MenuSeeder::class,
-            MenuPriceOptionSeeder::class,
+            // MenuPriceOptionSeeder::class,
             TransactionSeeder::class,
+            OptionSeeder::class,
+            CategorySeeder::class,
         ]);
     }
 }

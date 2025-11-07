@@ -65,7 +65,7 @@
             <a href="{{ route('menu.show', $menu->id) }}" class="menu-link">
                 <div class="menu-item">
                     <h3>{{ $menu->name }}</h3>
-                    <p>Harga mulai: Rp {{ number_format($menu->price, 0, ',', '.') }}</p>
+                    <p>Harga: Rp {{ number_format($menu->base_price, 0, ',', '.') }}</p>
                 </div>
             </a>
         @endforeach

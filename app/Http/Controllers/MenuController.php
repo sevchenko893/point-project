@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Menu;
+use App\Models\Temperature;
+use App\Models\Size;
+use App\Models\Sugar;
 
 class MenuController extends Controller
 {
@@ -13,10 +16,20 @@ class MenuController extends Controller
         return view('menu.index', compact('menus'));
     }
 
-    public function show($id)
+    // public function show($id)
+    // {
+    //     // Detail menu
+    //     $menu = Menu::findOrFail($id);
+    //     return view('menu.show', compact('menu'));
+    // }
+
+        public function show($id)
     {
-        // Detail menu
         $menu = Menu::findOrFail($id);
-        return view('menu.show', compact('menu'));
+        $temperatures = Temperature::all();
+        $sizes = Size::all();
+        $sugars = Sugar::all();
+
+        return view('menu.show', compact('menu', 'temperatures', 'sizes', 'sugars'));
     }
 }

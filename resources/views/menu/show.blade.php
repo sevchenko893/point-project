@@ -5,7 +5,7 @@
 <div class="container mt-4">
     <div class="menu-detail p-4 rounded shadow-sm bg-white mx-auto" style="max-width:500px;">
         <h2 class="fw-bold text-dark">{{ $menu->name }}</h2>
-        <p class="text-muted">Description: {{ $menu->description ?? '-' }}</p>
+        <p class="text-muted">Deskripsi: {{ $menu->description ?? '-' }}</p>
 
         <form id="menuForm" method="POST" action="{{ route('cart.add') }}">
             @csrf
@@ -21,7 +21,7 @@
 
             {{-- Temperature --}}
             <div class="mb-3">
-                <label for="temperature" class="form-label">Ice </label>
+                <label for="temperature" class="form-label">Ice Level</label>
                 <select id="temperature" name="temperature" class="form-select"
                     {{ strtolower($menu->category) === 'non-coffee' ? 'disabled' : '' }}>
                     @foreach($temperatures as $temp)
@@ -50,7 +50,7 @@
                         <option value="{{ $size->id }}">
                             {{ ucfirst($size->name) }}
                             @if($size->price > 0)
-                                (+Rp {{ number_format($size->price, 0, ',', '.') }})
+                                (+Rp {{ number_format($size->extra_price, 0, ',', '.') }})
                             @endif
                         </option>
                     @endforeach
@@ -79,7 +79,7 @@
             </div>
 
             {{-- Harga total --}}
-            <p class="fw-bold">Price: Rp <span id="price">{{ number_format($menu->base_price, 0, ',', '.') }}</span></p>
+            <p class="fw-bold">Harga: Rp <span id="price">{{ number_format($menu->base_price, 0, ',', '.') }}</span></p>
 
             <button type="submit" class="btn btn-dark w-100">Tambah ke Keranjang</button>
         </form>
@@ -89,7 +89,6 @@
         </div>
     </div>
 </div>
-
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -120,19 +119,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedTemp = temperatures.find(t => t.id == tempId);
         const selectedSize = sizes.find(s => s.id == sizeId);
 
+        // --- Logika kategori ---
         if (category === 'non-coffee') {
+            // Non-coffee cuma ICE, harga ICE = base (tidak nambah)
             tempPrice = 0;
         } else if (category === 'coffee') {
+            // Coffee: hot = base (0), ice = tambah harga kalau ada
             if (selectedTemp && selectedTemp.name.toLowerCase() === 'ice') {
-                tempPrice = safeNumber(selectedTemp.price);
+                tempPrice = safeNumber(selectedTemp.extra_price);
+                console.log('tempPrice',tempPrice)
             } else {
-                tempPrice = 0;
+                tempPrice = 0; // hot
             }
         } else {
+            // fallback category lain
             tempPrice = safeNumber(selectedTemp?.price);
         }
 
-        sizePrice = safeNumber(selectedSize?.price);
+        sizePrice = safeNumber(selectedSize?.extra_price);
+        // console.log('sizeprice',sizePrice)
+
         const total = (basePrice + tempPrice + sizePrice) * qty;
 
         priceSpan.textContent = total.toLocaleString('id-ID');
@@ -142,7 +148,8 @@ document.addEventListener('DOMContentLoaded', () => {
     tempSelect?.addEventListener('change', updatePrice);
     sizeSelect.addEventListener('change', updatePrice);
     quantityInput.addEventListener('input', updatePrice);
-    updatePrice();
+
+    updatePrice(); // kalkulasi awal
 });
 </script>
 @endpush

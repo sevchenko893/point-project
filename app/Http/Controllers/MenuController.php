@@ -6,6 +6,7 @@ use App\Models\Menu;
 use App\Models\Temperature;
 use App\Models\Size;
 use App\Models\Sugar;
+use App\Models\Category;
 
 class MenuController extends Controller
 {
@@ -29,7 +30,9 @@ class MenuController extends Controller
         $temperatures = Temperature::all();
         $sizes = Size::all();
         $sugars = Sugar::all();
+        $sugars = Sugar::all();
+        $categories = Category::all();
 
-        return view('menu.show', compact('menu', 'temperatures', 'sizes', 'sugars'));
+        return view('menu.show', compact('menu', 'temperatures', 'sizes', 'sugars','categories'));
     }
 }

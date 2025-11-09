@@ -64,7 +64,8 @@
 </head>
 
 <body>
-    {{-- Navbar --}}
+
+
     <nav class="navbar navbar-expand-lg navbar-dark shadow-sm sticky-top">
         <div class="container">
             <a class="navbar-brand" href="{{ url('/') }}">
@@ -80,20 +81,32 @@
                     <li class="nav-item">
                         <a href="{{ route('menu.index') }}" class="nav-link">Menu</a>
                     </li>
+
                     <li class="nav-item ms-2">
-                        <a href="{{ route('cart.index', [
-                            'table_number' => request('table_number'),
-                            'device_token' => request('device_token')
-                        ]) }}" class="btn btn-outline-light">
-                            <i class="fa fa-shopping-cart me-1"></i> Cart
-                        </a>
+                        @php
+                            $tableNumber = request('table_number');
+                            $deviceToken = request('device_token');
+                        @endphp
+
+                        @if ($tableNumber && $deviceToken)
+                            <a href="{{ route('cart.index', ['table_number' => $tableNumber, 'device_token' => $deviceToken]) }}"
+                               class="btn btn-outline-light">
+                                <i class="fa fa-shopping-cart me-1"></i> Cart
+                            </a>
+                        @else
+                            <a href="{{ route('menu.index') }}" class="btn btn-outline-light disabled" title="Table belum dipilih">
+                                <i class="fa fa-shopping-cart me-1"></i> Cart
+                            </a>
+                        @endif
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
+
     {{-- Main Content --}}
+    
     <main>
         <div class="container">
             @yield('content')

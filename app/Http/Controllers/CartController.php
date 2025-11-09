@@ -23,13 +23,15 @@ class CartController extends Controller
             ->where('device_token', $request->device_token)
             ->get();
 
-        $total = $cartItems->sum(fn($item) => $item->price * $item->quantity);
+        // return $cartItems;
 
-        return response()->json([
+        $total = $cartItems->sum(fn($item) => $item->price * $item->quantity);
+        // return 1;
+        return view('cart.index', [
             'table_number' => $request->table_number,
             'device_token' => $request->device_token,
             'total' => $total,
-            'items' => $cartItems
+            'cartItems' => $cartItems, // <-- nama variabel "items"
         ]);
     }
 
@@ -61,6 +63,7 @@ class CartController extends Controller
      */
     public function store(Request $request)
     {
+        // return $request->price;
         $request->validate([
             'table_number' => 'required|string',
             'device_token' => 'required|string',
@@ -73,7 +76,6 @@ class CartController extends Controller
         ]);
 
         $menu = Menu::findOrFail($request->menu_id);
-
         // Cek apakah item yang sama sudah ada di cart
         $cartItem = Cart::where('table_number', $request->table_number)
             ->where('device_token', $request->device_token)
@@ -95,14 +97,14 @@ class CartController extends Controller
                 'ice_level' => $request->ice_level,
                 'sugar_level' => $request->sugar_level,
                 'quantity' => $request->input('quantity', 1),
-                'price' => $menu->price,
+                'price' => $menu['base_price']
             ]);
         }
 
-        return response()->json([
-            'message' => 'Item berhasil ditambahkan ke cart',
-            'cart_item' => $cartItem
-        ]);
+        return redirect()->route('cart.index', [
+            'table_number' => $request->table_number,
+            'device_token' => $request->device_token,
+        ])->with('success', 'Item berhasil ditambahkan ke cart!');
     }
 
     /**

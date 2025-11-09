@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\TableController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,10 +38,15 @@ Route::get('/dashboard', function () {
 Route::get('/', [MenuController::class, 'index'])->name('menu.index');
 Route::get('/menu/{id}', [MenuController::class, 'show'])->name('menu.show');
 
-Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::get('/cart/{table_number}/{device_token}', [CartController::class, 'index'])->name('cart.index');
+// Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart', [CartController::class, 'store'])->name('cart.add');;      // Tambah item
 Route::put('/cart/{cart}', [CartController::class, 'update'])->name('cart.update');
 Route::delete('/cart/{cart}', [CartController::class, 'destroy'])->name('cart.destroy');
 
-// untuk co 
+// untuk co
 Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout');
+
+// web.php
+Route::get('/select-table', [TableController::class, 'index'])->name('table.select');
+Route::post('/select-table', [TableController::class, 'store'])->name('table.store');

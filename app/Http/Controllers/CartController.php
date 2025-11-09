@@ -11,30 +11,47 @@ class CartController extends Controller
     /**
      * Menampilkan semua item di cart untuk meja + device tertentu.
      */
-    public function index(Request $request)
-    {
-        $request->validate([
-            'table_number' => 'required|string',
-            'device_token' => 'required|string',
-        ]);
+    // public function index(Request $request)
+    // {
+    //     $request->validate([
+    //         'table_number' => 'required|string',
+    //         'device_token' => 'required|string',
+    //     ]);
 
-        $cartItems = Cart::with('menu')
-            ->where('table_number', $request->table_number)
-            ->where('device_token', $request->device_token)
-            ->get();
+    //     $cartItems = Cart::with('menu')
+    //         ->where('table_number', $request->table_number)
+    //         ->where('device_token', $request->device_token)
+    //         ->get();
 
-        // return $cartItems;
+    //     // return $cartItems;
 
-        $total = $cartItems->sum(fn($item) => $item->price * $item->quantity);
-        // return 1;
-        return view('cart.index', [
-            'table_number' => $request->table_number,
-            'device_token' => $request->device_token,
-            'total' => $total,
-            'cartItems' => $cartItems, // <-- nama variabel "items"
-        ]);
-    }
+    //     $total = $cartItems->sum(fn($item) => $item->price * $item->quantity);
+    //     // return 1;
+    //     return view('cart.index', [
+    //         'table_number' => $request->table_number,
+    //         'device_token' => $request->device_token,
+    //         'total' => $total,
+    //         'cartItems' => $cartItems, // <-- nama variabel "items"
+    //     ]);
+    // }
 
+
+    public function index($table_number, $device_token)
+{
+    $cartItems = Cart::with('menu')
+        ->where('table_number', $table_number)
+        ->where('device_token', $device_token)
+        ->get();
+
+    $total = $cartItems->sum(fn($item) => $item->price * $item->quantity);
+
+    return view('cart.index', [
+        'table_number' => $table_number,
+        'device_token' => $device_token,
+        'cartItems' => $cartItems,
+        'total' => $total,
+    ]);
+}
 //     public function index(Request $request)
 // {
 //     $request->validate([

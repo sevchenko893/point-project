@@ -14,10 +14,31 @@
             <input type="hidden" name="device_token" value="{{ request()->cookie('device_token') ?? Str::uuid() }}">
 
             {{-- Table Number --}}
-            <div class="mb-3">
+            {{-- <div class="mb-3">
                 <label for="table_number" class="form-label">Table Number </label>
                 <input type="text" id="table_number" name="table_number" class="form-control" placeholder="Input Table Number" required>
+            </div> --}}
+            {{-- Table Number --}}
+            @if(session('table_number'))
+            {{-- Jika sudah ada di session, simpan sebagai hidden --}}
+            <input type="hidden" name="table_number" value="{{ session('table_number') }}">
+            <input type="hidden" name="device_token" value="{{ session('device_token') }}">
+            <div class="alert alert-secondary py-2">
+                <small>
+                    <i class="fa fa-chair"></i> Table: <strong>{{ session('table_number') }}</strong> <br>
+                    <i class="fa fa-mobile-screen-button"></i> Device: <strong>{{ Str::limit(session('device_token'), 8, '...') }}</strong>
+                </small>
             </div>
+            @else
+            {{-- Jika belum ada session, tampilkan input manual --}}
+            <div class="mb-3">
+                <label for="table_number" class="form-label">Table Number</label>
+                <input type="text" id="table_number" name="table_number" class="form-control" placeholder="Input Table Number" required>
+            </div>
+
+            <input type="hidden" name="device_token" value="{{ request()->cookie('device_token') ?? Str::uuid() }}">
+            @endif
+
 
             {{-- Temperature --}}
             <div class="mb-3">
@@ -37,7 +58,7 @@
                     @endforeach
                 </select>
                 @if(strtolower($menu->category) === 'non-coffee')
-                    <input type="hidden" id="temperature_hidden" name="temperature" 
+                    <input type="hidden" id="temperature_hidden" name="temperature"
                            value="{{ $temperatures->firstWhere('name', 'Ice')->id ?? '' }}">
                 @endif
             </div>

@@ -79,20 +79,14 @@
                         <a href="{{ route('menu.index') }}" class="nav-link">Menu</a>
                     </li>
                     <li class="nav-item ms-2">
-                        <a href="{{ route('cart.index', [
-                            'table_number' => session('table_number'),
-                            'device_token' => session('device_token')
-                        ]) }}"
-                        class="btn btn-outline-light {{ !session('table_number') ? 'disabled' : '' }}">
-                            <i class="fa fa-shopping-cart me-1"></i> Cart
-                        </a>
-
-                        {{-- <a href="{{ route('cart.index', [
-                            'table_number' => request('table_number') ?? old('table_number'),
-                            'device_token' => request('device_token') ?? old('device_token')
-                        ]) }}" class="btn btn-outline-light">
-                            <i class="fa fa-shopping-cart me-1"></i> Cart
-                        </a> --}}
+                        @if (session('table_number') && session('device_token'))
+                            <a href="{{ route('cart.index', [
+                                'table_number' => session('table_number'),
+                                'device_token' => session('device_token')
+                            ]) }}" class="nav-link">Cart</a>
+                        @else
+                            <a href="#" class="nav-link text-muted" onclick="alert('Silahkan Pesan Terlebih Dahulu.')">Cart</a>
+                        @endif
                     </li>
                 </ul>
             </div>

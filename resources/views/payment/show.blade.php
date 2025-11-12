@@ -34,7 +34,7 @@
                 <div class="mb-3">
                     <label for="payment_method" class="form-label">Pilih Metode Pembayaran:</label>
                     <select name="payment_method" id="payment_method" class="form-select" required>
-                        <option value="cash">Bayar Tunai</option>
+                        {{-- <option value="cash">Bayar Tunai</option> --}}
                         <option value="qris">QRIS</option>
                     </select>
                 </div>

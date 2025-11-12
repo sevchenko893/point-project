@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\TableController;
 
 /*
@@ -50,3 +51,8 @@ Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout')
 // web.php
 Route::get('/select-table', [TableController::class, 'index'])->name('table.select');
 Route::post('/select-table', [TableController::class, 'store'])->name('table.store');
+
+
+Route::get('/payment/{transaction}', [PaymentController::class, 'show'])->name('payment.show');
+Route::post('/payment/{transaction}/pay', [PaymentController::class, 'pay'])->name('payment.pay');
+Route::get('/payment/{transaction}/success', [PaymentController::class, 'success'])->name('payment.success');

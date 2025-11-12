@@ -56,9 +56,8 @@ class CheckoutController extends Controller
             ->where('device_token', $request->device_token)
             ->delete();
 
-        return redirect()->route('cart.index', [
-            'table_number' => $request->table_number,
-            'device_token' => $request->device_token,
-        ])->with('success', 'Checkout berhasil! Transaksi sedang diproses.');
+            return redirect()
+            ->route('payment.show', ['transaction' => $transaction->id])
+            ->with('success', 'Checkout berhasil! Silakan lanjut ke pembayaran.');
     }
 }

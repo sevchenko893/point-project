@@ -26,6 +26,8 @@ class MenuController extends Controller
 
         public function show($id)
     {
+        dd(session()->all());
+
         $menu = Menu::findOrFail($id);
         $temperatures = Temperature::all();
         $sizes = Size::all();

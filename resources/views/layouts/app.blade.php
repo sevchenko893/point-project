@@ -80,9 +80,10 @@
                     </li>
                     <li class="nav-item ms-2">
                         <a href="{{ route('cart.index', [
-                            'table_number' => session('table_number') ?? 'unknown',
-                            'device_token' => session('device_token') ?? 'unknown'
-                        ]) }}" class="btn btn-outline-light">
+                            'table_number' => session('table_number'),
+                            'device_token' => session('device_token')
+                        ]) }}"
+                        class="btn btn-outline-light {{ !session('table_number') ? 'disabled' : '' }}">
                             <i class="fa fa-shopping-cart me-1"></i> Cart
                         </a>
 

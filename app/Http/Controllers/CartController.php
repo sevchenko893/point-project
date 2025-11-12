@@ -35,45 +35,46 @@ class CartController extends Controller
     //     ]);
     // }
 
+    //     dd(session()->all());
+    //     public function index($table_number, $device_token)
+    // {
+    //     $cartItems = Cart::with('menu')
+    //         ->where('table_number', $table_number)
+    //         ->where('device_token', $device_token)
+    //         ->get();
+
+    //     $total = $cartItems->sum(fn($item) => $item->price * $item->quantity);
+
+    //     return view('cart.index', [
+    //         'table_number' => $table_number,
+    //         'device_token' => $device_token,
+    //         'cartItems' => $cartItems,
+    //         'total' => $total,
+    //     ]);
+    // }
 
     public function index($table_number, $device_token)
-{
-    $cartItems = Cart::with('menu')
-        ->where('table_number', $table_number)
-        ->where('device_token', $device_token)
-        ->get();
+    {
+        // Simpan ke session
+        session([
+            'table_number' => $table_number,
+            'device_token' => $device_token,
+        ]);
 
-    $total = $cartItems->sum(fn($item) => $item->price * $item->quantity);
+        $cartItems = Cart::with('menu')
+            ->where('table_number', $table_number)
+            ->where('device_token', $device_token)
+            ->get();
 
-    return view('cart.index', [
-        'table_number' => $table_number,
-        'device_token' => $device_token,
-        'cartItems' => $cartItems,
-        'total' => $total,
-    ]);
-}
-//     public function index(Request $request)
-// {
-//     $request->validate([
-//         'table_number' => 'required|string',
-//         'device_token' => 'required|string',
-//     ]);
+        $total = $cartItems->sum(fn($item) => $item->price * $item->quantity);
 
-//     $cartItems = \App\Models\Cart::with('menu')
-//         ->where('table_number', $request->table_number)
-//         ->where('device_token', $request->device_token)
-//         ->get();
-
-//     $total = $cartItems->sum(fn($item) => $item->price * $item->quantity);
-
-//     return view('cart.index', [
-//         'cartItems' => $cartItems,
-//         'table_number' => $request->table_number,
-//         'device_token' => $request->device_token,
-//         'total' => $total,
-//     ]);
-// }
-
+        return view('cart.index', [
+            'table_number' => $table_number,
+            'device_token' => $device_token,
+            'cartItems' => $cartItems,
+            'total' => $total,
+        ]);
+    }
 
     /**
      * Menambah item ke cart.

@@ -7,6 +7,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\TableController;
+use App\Http\Controllers\WebhookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,3 +57,31 @@ Route::post('/select-table', [TableController::class, 'store'])->name('table.sto
 Route::get('/payment/{transaction}', [PaymentController::class, 'show'])->name('payment.show');
 Route::post('/payment/{transaction}/pay', [PaymentController::class, 'pay'])->name('payment.pay');
 Route::get('/payment/{transaction}/success', [PaymentController::class, 'success'])->name('payment.success');
+
+
+Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout');
+Route::post('/xendit/callback', [CheckoutController::class, 'callback'])->name('xendit.callback');
+
+
+Route::get('/payment/success/{id}', function($id) {
+    return "Pembayaran order #$id berhasil!";
+});
+
+Route::get('/payment/failed/{id}', function($id) {
+    return "Pembayaran order #$id gagal atau dibatalkan!";
+});
+
+
+// Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+
+// Halaman sukses / gagal
+Route::get('/payment/success/{id}', function($id){
+    return view('payment.success', compact('id'));
+})->name('payment.success');
+
+Route::get('/payment/failed/{id}', function($id){
+    return view('payment.failed', compact('id'));
+})->name('payment.failed');
+
+// Webhook Xendit
+Route::post('/webhook/xendit', [WebhookController::class, 'handle'])->name('webhook.xendit');

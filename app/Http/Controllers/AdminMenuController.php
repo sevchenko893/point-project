@@ -9,13 +9,13 @@ use App\Models\Sugar;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
-class MenuController extends Controller
+class AdminMenuController extends Controller
 {
     public function index()
     {
         // Ambil semua menu
         $menus = Menu::all();
-        return view('menu.index', compact('menus'));
+        return view('admin.menus.index', compact('menus'));
     }
 
     public function show($id)

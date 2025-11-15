@@ -20,6 +20,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        URL::forceScheme('https');
+        // FORCE_HTTPS bisa diatur dari ENV
+        if (env('FORCE_HTTPS', false)) {
+            URL::forceScheme('https');
+        }
     }
+
 }

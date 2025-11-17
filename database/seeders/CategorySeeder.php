@@ -9,19 +9,20 @@ class CategorySeeder extends Seeder
 {
     public function run(): void
 {
-        DB::table('categories')->insert([
-            [
-                'name' => 'Coffee',
-                'description' => 'Menu berbasis kopi seperti espresso, latte, cappuccino, dan lainnya.',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Non-Coffee',
-                'description' => 'Menu tanpa kopi seperti matcha, chocolate, frappe, dan lainnya.',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
+    DB::table('categories')->insert([
+        [
+            'name' => 'Coffee',
+            'description' => 'Menu berbasis kopi.',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+        [
+            'name' => 'Non-Coffee',
+            'description' => 'Menu tanpa kopi.',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ],
+    ]);
+
     }
 }

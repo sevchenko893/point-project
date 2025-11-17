@@ -41,7 +41,7 @@ class AdminMenuController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'price' => 'required|numeric',
+            'base_price' => 'required|numeric',
             'category_id' => 'required|exists:categories,id'
         ]);
 
@@ -58,9 +58,11 @@ class AdminMenuController extends Controller
 
     public function update(Request $request, Menu $menu)
     {
+        dd($request);
+
         $request->validate([
             'name' => 'required|string|max:255',
-            'price' => 'required|numeric',
+            'base_price' => 'required|numeric',
             'category_id' => 'required|exists:categories,id'
         ]);
 

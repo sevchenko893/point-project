@@ -11,11 +11,16 @@ class Menu extends Model
 
     protected $fillable = [
         'name',
+        'category',
+        'base_price',
         'description',
         'status',
     ];
 
-    /** 
+    protected $casts = [
+        'base_price' => 'decimal:2',
+    ];
+    /**
      * Relasi ke MenuVariant (1 Menu punya banyak variasi)
      */
     public function variants()

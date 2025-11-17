@@ -10,13 +10,14 @@ return new class extends Migration
         Schema::create('menus', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->enum('category', ['coffee', 'non-coffee'])->nullable();
+            $table->foreignId('category_id')->constrained()->cascadeOnDelete();
+            // $table->enum('category', ['coffee', 'non-coffee'])->nullable();
             $table->decimal('base_price', 10, 2); // harga dasar (biasanya hot)
             $table->text('description')->nullable();
             $table->enum('status', ['available', 'unavailable'])->default('available');
             $table->timestamps();
         });
-        
+
     }
 
     public function down(): void

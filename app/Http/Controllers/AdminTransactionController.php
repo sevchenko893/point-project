@@ -16,6 +16,13 @@ class AdminTransactionController extends Controller
         return view('admin.transactions.index', compact('transactions'));
     }
 
+    public function show(Transaction $transaction)
+    {
+        // Load user dan items beserta menu
+        $transaction->load('user', 'items.menu');
+        return view('admin.transactions.show', compact('transaction'));
+    }
+
     public function create()
     {
         $users = User::all();

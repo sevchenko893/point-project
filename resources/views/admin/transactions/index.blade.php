@@ -33,10 +33,12 @@
                 <td>{{ ucfirst($t->payment_method ?? '-') }}</td>
                 <td>{{ ucfirst($t->status) }}</td>
                 <td>
-                    <a href="{{ route('transactions.edit',$t->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                    <form action="{{ route('transactions.destroy',$t->id) }}" method="POST" style="display:inline;">
-                        @csrf @method('DELETE')
-                        <button class="btn btn-sm btn-danger" onclick="return confirm('Yakin hapus?')">Hapus</button>
+                    <a href="{{ route('transactions.show', $t->id) }}" class="btn btn-sm btn-info">Detail</a>
+                    <a href="{{ route('transactions.edit', $t->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                    <form action="{{ route('transactions.destroy', $t->id) }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin hapus?')">Hapus</button>
                     </form>
                 </td>
             </tr>

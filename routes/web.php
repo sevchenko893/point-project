@@ -84,8 +84,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::get('transactions/{transaction}/edit', [AdminTransactionController::class, 'edit'])->name('transactions.edit');
         Route::put('transactions/{transaction}', [AdminTransactionController::class, 'update'])->name('transactions.update');
         Route::delete('transactions/{transaction}', [AdminTransactionController::class, 'destroy'])->name('transactions.destroy');
+        // Tambahkan route detail
+        Route::get('transactions/{transaction}', [AdminTransactionController::class, 'show'])->name('transactions.show');
 
-        Route::prefix('menus')->group(function () {
+ Route::prefix('menus')->group(function () {
             Route::get('/', [AdminMenuController::class, 'index'])->name('menus.index');
             Route::get('/create', [AdminMenuController::class, 'create'])->name('menus.create');
             Route::post('/', [AdminMenuController::class, 'store'])->name('menus.store');

@@ -37,43 +37,39 @@ class AdminMenuController extends Controller
         return view('admin.menus.create', compact('categories'));
     }
 
+    public function edit(Menu $menu)
+    {
+        $categories = Category::all();
+        return view('admin.menus.edit', compact('menu','categories'));
+    }
+
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'base_price' => 'required|numeric',
-            'category_id' => 'required|exists:categories,id'
+            'name'        => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'base_price'  => 'required|numeric',
+            'description' => 'nullable|string',
+            'status'      => 'required|in:available,unavailable',
         ]);
 
-        Menu::create($request->all());
+        Menu::create($request->only(['name','category_id','base_price','description','status']));
 
         return redirect()->route('menus.index')->with('success', 'Menu berhasil ditambahkan!');
     }
 
-    public function edit(Menu $menu)
-    {
-        $categories = Category::all();
-        return view('admin.menus.edit', compact('menu', 'categories'));
-    }
-
     public function update(Request $request, Menu $menu)
     {
-        dd($request);
-
         $request->validate([
-            'name' => 'required|string|max:255',
-            'base_price' => 'required|numeric',
-            'category_id' => 'required|exists:categories,id'
+            'name'        => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'base_price'  => 'required|numeric',
+            'description' => 'nullable|string',
+            'status'      => 'required|in:available,unavailable',
         ]);
 
-        $menu->update($request->all());
+        $menu->update($request->only(['name','category_id','base_price','description','status']));
 
         return redirect()->route('menus.index')->with('success', 'Menu berhasil diperbarui!');
-    }
-
-    public function destroy(Menu $menu)
-    {
-        $menu->delete();
-        return redirect()->route('menus.index')->with('success', 'Menu berhasil dihapus!');
     }
 }

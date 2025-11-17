@@ -28,7 +28,7 @@
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $menu->name }}</td>
-                <td>{{ $menu->category ?? '-' }}</td>
+                <td>{{ $menu->category->name ?? '-' }}</td>
                 <td>Rp {{ number_format($menu->base_price, 0, ',', '.') }}</td>
                 <td>
                     <a href="{{ route('menus.edit', $menu->id) }}" class="btn btn-sm btn-warning">Edit</a>

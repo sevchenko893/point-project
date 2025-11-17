@@ -11,15 +11,20 @@ class Menu extends Model
 
     protected $fillable = [
         'name',
-        'category',
+        'category_id',
         'base_price',
         'description',
         'status',
     ];
-
+    
     protected $casts = [
         'base_price' => 'decimal:2',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
     /**
      * Relasi ke MenuVariant (1 Menu punya banyak variasi)
      */

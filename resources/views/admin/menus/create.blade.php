@@ -27,18 +27,19 @@
     </div>
 
     {{-- CATEGORY --}}
-    <div class="mb-3">
-        <label for="category" class="form-label">Kategori</label>
-        <select name="category" class="form-control">
-            <option value="" disabled {{ !isset($menu) ? 'selected' : '' }}>Pilih Kategori</option>
-            <option value="coffee" {{ old('category', $menu->category ?? '') == 'coffee' ? 'selected' : '' }}>
-                Coffee
+<div class="mb-3">
+    <label for="category_id" class="form-label">Kategori</label>
+    <select name="category_id" class="form-control" required>
+        <option value="" disabled {{ !isset($menu) ? 'selected' : '' }}>Pilih Kategori</option>
+        @foreach($categories as $category)
+            <option value="{{ $category->id }}"
+                {{ old('category_id', $menu->category_id ?? '') == $category->id ? 'selected' : '' }}>
+                {{ $category->name }}
             </option>
-            <option value="non-coffee" {{ old('category', $menu->category ?? '') == 'non-coffee' ? 'selected' : '' }}>
-                Non Coffee
-            </option>
-        </select>
-    </div>
+        @endforeach
+    </select>
+</div>
+
 
     {{-- BASE PRICE --}}
     <div class="mb-3">

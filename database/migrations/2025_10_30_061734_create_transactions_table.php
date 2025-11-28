@@ -12,7 +12,8 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
             $table->decimal('total_amount', 10, 2)->default(0);
             $table->enum('payment_method', ['cash', 'card', 'qris'])->nullable();
-            $table->enum('status', ['pending', 'paid', 'cancelled'])->default('pending');
+            $table->enum('status', ['pending', 'processing', 'paid', 'cancelled', 'completed'])->default('pending');
+
             $table->timestamps();
         });
     }

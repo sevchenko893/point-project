@@ -191,6 +191,8 @@ document.addEventListener('DOMContentLoaded', () => {
 }
 
     function updateTransactionTotal() {
+        console.log('totalssss')
+
         let total = 0;
         document.querySelectorAll('.item-price').forEach(input => {
             total += parseFloat(input.value) || 0;

@@ -68,6 +68,7 @@
 <div class="content">
     @yield('content')
 </div>
+@stack('scripts') <!-- <--- tambahkan ini -->
 
 </body>
 </html>

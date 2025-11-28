@@ -19,6 +19,7 @@
     @csrf
     @method('PUT')
 
+    {{-- User --}}
     <div class="mb-3">
         <label for="user_id" class="form-label">User</label>
         <select name="user_id" class="form-control">
@@ -32,12 +33,7 @@
         <small class="text-muted">Sebelumnya: {{ $transaction->user->name }}</small>
     </div>
 
-    <div class="mb-3">
-        <label for="total_amount" class="form-label">Total Amount</label>
-        <input type="number" step="0.01" name="total_amount" class="form-control" value="{{ $transaction->total_amount }}" required>
-        <small class="text-muted">Sebelumnya: {{ $transaction->getOriginal('total_amount') }}</small>
-    </div>
-
+    {{-- Payment Method --}}
     <div class="mb-3">
         <label for="payment_method" class="form-label">Payment Method</label>
         <select name="payment_method" class="form-control">
@@ -48,6 +44,7 @@
         <small class="text-muted">Sebelumnya: {{ $transaction->getOriginal('payment_method') }}</small>
     </div>
 
+    {{-- Status --}}
     <div class="mb-3">
         <label for="status" class="form-label">Status</label>
         <select name="status" class="form-control">
@@ -60,14 +57,16 @@
         <small class="text-muted">Sebelumnya: {{ $transaction->getOriginal('status') }}</small>
     </div>
 
+    {{-- Transaction Items --}}
     <h4>Transaction Items</h4>
     @foreach($transaction->items as $index => $item)
-    <div class="card p-3 mb-2 item-card">
+    <div class="card p-3 mb-3 item-card">
         @php
             $basePrice = $item->menu->base_price ?? 0;
         @endphp
         <input type="hidden" class="item-base-price" value="{{ $basePrice }}">
 
+        {{-- Menu --}}
         <div class="mb-2">
             <label>Menu</label>
             <select name="items[{{ $index }}][menu_id]" class="form-control">
@@ -80,24 +79,22 @@
             <small class="text-muted">Sebelumnya: {{ $item->menu->name ?? '-' }}</small>
         </div>
 
+        {{-- Quantity --}}
         <div class="mb-2">
             <label>Quantity</label>
             <input type="number" name="items[{{ $index }}][quantity]" class="form-control item-quantity" value="{{ $item->quantity }}" min="1">
             <small class="text-muted">Sebelumnya: {{ $item->getOriginal('quantity') }}</small>
         </div>
 
+        {{-- Total Price per Item --}}
         <div class="mb-2">
-            <label>Price</label>
-            <input type="number" name="items[{{ $index }}][price]" class="form-control item-price" value="{{ $item->price }}">
-            <small class="text-muted">Sebelumnya: {{ $item->getOriginal('price') }}</small>
+            <label>Total Price</label>
+            <input type="text" class="form-control item-price" value="{{ $item->price }}" readonly>
         </div>
 
+        {{-- Temperature --}}
         <div class="mb-2">
             <label>Temperature</label>
-            {{-- <select name="items[{{ $index }}][temperature]" class="form-control item-temp">
-                <option value="hot" {{ $item->temperature == 'hot' ? 'selected' : '' }}>Hot</option>
-                <option value="cold" {{ $item->temperature == 'cold' ? 'selected' : '' }}>Cold</option>
-            </select> --}}
             <select name="items[{{ $index }}][temperature]" class="form-control item-temp"
                 data-extra-hot="{{ $item->temperature=='hot' ? $item->menu->tempHotPrice ?? 0 : 0 }}"
                 data-extra-cold="{{ $item->temperature=='cold' ? $item->menu->tempColdPrice ?? 0 : 0 }}">
@@ -107,13 +104,10 @@
             <small class="text-muted">Sebelumnya: {{ $item->getOriginal('temperature') }}</small>
         </div>
 
+
+        {{-- Size --}}
         <div class="mb-2">
             <label>Size</label>
-            {{-- <select name="items[{{ $index }}][size]" class="form-control item-size" data-extra-small="0" data-extra-medium="0" data-extra-large="0">
-                <option value="small" {{ $item->size == 'small' ? 'selected' : '' }}>Small</option>
-                <option value="medium" {{ $item->size == 'medium' ? 'selected' : '' }}>Medium</option>
-                <option value="large" {{ $item->size == 'large' ? 'selected' : '' }}>Large</option>
-            </select> --}}
             <select name="items[{{ $index }}][size]" class="form-control item-size"
                 data-extra-small="{{ $item->size=='small' ? $item->menu->sizeSmallPrice ?? 0 : 0 }}"
                 data-extra-medium="{{ $item->size=='medium' ? $item->menu->sizeMediumPrice ?? 0 : 0 }}"
@@ -122,10 +116,10 @@
                 <option value="medium" {{ $item->size == 'medium' ? 'selected' : '' }}>Medium</option>
                 <option value="large" {{ $item->size == 'large' ? 'selected' : '' }}>Large</option>
             </select>
-
             <small class="text-muted">Sebelumnya: {{ $item->getOriginal('size') }}</small>
         </div>
 
+        {{-- Ice Level --}}
         <div class="mb-2">
             <label>Ice Level</label>
             <select name="items[{{ $index }}][ice_level]" class="form-control item-ice">
@@ -137,6 +131,11 @@
             <small class="text-muted">Sebelumnya: {{ $item->getOriginal('ice_level') }}</small>
         </div>
 
+        <input type="text" class="form-control item-price-display" value="{{ $item->price ?? 0 }}" readonly>
+        <input type="hidden" name="items[{{ $index }}][price]"  value="{{ $item->price ?? 0 }}">
+
+
+        {{-- Sugar Level --}}
         <div class="mb-2">
             <label>Sugar Level</label>
             <select name="items[{{ $index }}][sugar_level]" class="form-control item-sugar">
@@ -150,6 +149,12 @@
     </div>
     @endforeach
 
+    {{-- Total Transaction --}}
+    <div class="mb-3">
+        <label for="total_amount" class="form-label">Total Transaction</label>
+        <input type="number" step="0.01" name="total_amount" class="form-control" value="{{ $transaction->total_amount }}" readonly>
+    </div>
+
     <button type="submit" class="btn btn-success">Update</button>
     <a href="{{ route('transactions.index') }}" class="btn btn-secondary">Kembali</a>
 </form>
@@ -158,47 +163,45 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+
     function updateItemPrice(card) {
-    const basePrice = parseFloat(card.querySelector('.item-base-price').value) || 0;
-    const qty = parseInt(card.querySelector('.item-quantity').value) || 1;
-        console.log('qty',qty)
-    // Ambil extra price dari size
-    const sizeSelect = card.querySelector('.item-size');
-    const sizeExtra = parseFloat(sizeSelect.selectedOptions[0].dataset.extraSmall ||
-                                sizeSelect.selectedOptions[0].dataset.extraMedium ||
-                                sizeSelect.selectedOptions[0].dataset.extraLarge || 0);
+        const basePrice = parseFloat(card.querySelector('.item-base-price').value) || 0;
+        const qty = parseInt(card.querySelector('.item-quantity').value) || 1;
 
-    const tempSelect = card.querySelector('.item-temp');
-    const tempExtra = parseFloat(tempSelect.selectedOptions[0].dataset.extraHot ||
-                                 tempSelect.selectedOptions[0].dataset.extraCold || 0);
+        // Extra price dari size
+        const sizeSelect = card.querySelector('.item-size');
+        const sizeExtra = parseFloat(
+            sizeSelect.selectedOptions[0].dataset.extraSmall ||
+            sizeSelect.selectedOptions[0].dataset.extraMedium ||
+            sizeSelect.selectedOptions[0].dataset.extraLarge || 0
+        );
 
-    const iceSelect = card.querySelector('.item-ice');
-    const iceExtra = parseFloat(iceSelect.selectedOptions[0].dataset.extraNoIce ||
-                                iceSelect.selectedOptions[0].dataset.extraLess ||
-                                iceSelect.selectedOptions[0].dataset.extraNormal ||
-                                iceSelect.selectedOptions[0].dataset.extraExtra || 0);
+        // Extra price dari temperature
+        const tempSelect = card.querySelector('.item-temp');
+        const tempExtra = parseFloat(
+            tempSelect.selectedOptions[0].dataset.extraHot ||
+            tempSelect.selectedOptions[0].dataset.extraCold || 0
+        );
 
-    const sugarSelect = card.querySelector('.item-sugar');
-    const sugarExtra = parseFloat(sugarSelect.selectedOptions[0].dataset.extraNoSugar ||
-                                  sugarSelect.selectedOptions[0].dataset.extraLess ||
-                                  sugarSelect.selectedOptions[0].dataset.extraNormal ||
-                                  sugarSelect.selectedOptions[0].dataset.extraExtra || 0);
+        // Ice level
+        const iceSelect = card.querySelector('.item-ice');
+        const iceExtra = 0; // bisa disesuaikan jika ada harga tambahan
 
-    const total = (basePrice + sizeExtra + tempExtra + iceExtra + sugarExtra) * qty;
-    card.querySelector('.item-price').value = total;
+        // Sugar level
+        const sugarSelect = card.querySelector('.item-sugar');
+        const sugarExtra = 0; // bisa disesuaikan jika ada harga tambahan
 
-    updateTransactionTotal();
-}
+        const total = (basePrice + sizeExtra + tempExtra + iceExtra + sugarExtra) * qty;
+        card.querySelector('.item-price').value = total.toFixed(2);
+
+        updateTransactionTotal();
+    }
 
     function updateTransactionTotal() {
-        console.log('totalssss')
-
         let total = 0;
         document.querySelectorAll('.item-price').forEach(input => {
             total += parseFloat(input.value) || 0;
         });
-        console.log('total',total)
-
         document.querySelector('[name="total_amount"]').value = total.toFixed(2);
     }
 

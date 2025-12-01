@@ -15,6 +15,16 @@ use App\Http\Controllers\DashboardController;
 // ======================
 // AUTH ROUTES
 // ======================
+
+Route::post('/webhook/xendit', [WebhookController::class, 'handle'])
+    ->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class);
+
+Route::post('/webhook-test', function (\Illuminate\Http\Request $request) {
+    \Illuminate\Support\Facades\Log::info('Webhook test hit', $request->all());
+    return response()->json(['ok']);
+})->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class);
+
+
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -71,9 +81,6 @@ Route::post('/select-table', [TableController::class, 'store'])->name('table.sto
 // ======================
 // WEBHOOK
 // ======================
-
-Route::post('/webhook/xendit', [WebhookController::class, 'handle'])->name('webhook.xendit');
-
 Route::prefix('admin')->middleware('auth')->group(function () {
 
 

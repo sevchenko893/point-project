@@ -10,25 +10,36 @@ class WebhookController extends Controller
 {
     public function handle(Request $request)
     {
+        // RAW Body
+        Log::info('RAW BODY: ' . $request->getContent());
+
+        // JSON decoded (array)
         $data = $request->all();
+        Log::info('DECODED BODY:', $data);
 
-        // Log payload dengan channel stack
-        Log::channel('stack')->info('Xendit Webhook received', $data);
-        Log::channel('stack')->info('Xendit debug', $request->all());
-        Log::channel('stack')->info('Xendit request', $request());
+        // Headers
+        Log::info('HEADERS:', $request->headers->all());
 
-        // Optional: validasi callback token
+        Log::info('WEBHOOK MASUK!');
+
+        // Token Validation
         $token = $request->header('X-CALLBACK-TOKEN');
-        if ($token && $token !== config('services.xendit.webhook_token')) {
-            Log::channel('stack')->warning('Xendit Webhook Unauthorized', $data);
+        if ($token !== config('services.xendit.webhook_token')) {
+            Log::warning('Unauthorized webhook', $data);
             return response()->json(['status' => 'unauthorized'], 401);
         }
 
-        // Cari transaksi berdasarkan Xendit invoice ID
-        $transaction = Transaction::where('transaction_id', $data['id'])->first();
+        // --- PERBAIKI PENTING DISINI ---
+        if (!isset($data['id'])) {
+            Log::error('Missing invoice id', $data);
+            return response()->json(['status' => 'missing id'], 400);
+        }
+
+        // Cari transaction
+        $transaction = Transaction::where('xendit_id', $data['id'])->first();
 
         if (!$transaction) {
-            Log::channel('stack')->warning('Transaction not found for Xendit Webhook', $data);
+            Log::warning('Transaction not found', ['xendit_id' => $data['id']]);
             return response()->json(['status' => 'transaction not found'], 404);
         }
 
@@ -37,21 +48,32 @@ class WebhookController extends Controller
             switch (strtoupper($data['status'])) {
                 case 'PAID':
                     $transaction->update(['status' => 'paid']);
-                    Log::channel('stack')->info('Transaction marked as paid', ['transaction_id' => $transaction->id]);
+                    Log::info('Transaction marked as PAID', ['transaction_id' => $transaction->id]);
                     break;
+
                 case 'EXPIRED':
                     $transaction->update(['status' => 'expired']);
-                    Log::channel('stack')->info('Transaction marked as expired', ['transaction_id' => $transaction->id]);
+                    Log::info('Transaction EXPIRED', ['transaction_id' => $transaction->id]);
                     break;
+
                 case 'FAILED':
                     $transaction->update(['status' => 'failed']);
-                    Log::channel('stack')->info('Transaction marked as failed', ['transaction_id' => $transaction->id]);
+                    Log::info('Transaction FAILED', ['transaction_id' => $transaction->id]);
                     break;
-                default:
-                    Log::channel('stack')->info('Unknown status received', ['status' => $data['status'], 'transaction_id' => $transaction->id]);
             }
         }
 
         return response()->json(['status' => 'ok']);
     }
+
+
+//     public function handle(Request $request)
+// {
+
+//     \Log::info('WEBHOOK MASUK!', request()->all());
+
+//     \Log::info('WebhookController@handle dipanggil', $request->all());
+// return response()->json(['status' => 'received']);
+
+// }
 }

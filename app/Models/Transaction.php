@@ -11,6 +11,7 @@ class Transaction extends Model
 
     protected $fillable = [
         'user_id',
+        'xendit_id',
         'total_amount',
         'payment_method',
         'status',
@@ -32,5 +33,5 @@ class Transaction extends Model
         return $this->belongsTo(User::class);
     }
 
-    
+
 }

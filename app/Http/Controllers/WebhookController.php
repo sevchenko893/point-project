@@ -5,61 +5,62 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Log;
+use App\Events\TransactionPaid;
 
 class WebhookController extends Controller
 {
 
+
     public function handle(Request $request)
     {
-        // Log raw body
-        Log::info('RAW BODY: ' . $request->getContent());
+        Log::info('[WEBHOOK] RAW BODY: ' . $request->getContent());
 
-        // JSON decoded body
         $data = $request->all();
-        Log::info('DECODED BODY:', $data);
+        Log::info('[WEBHOOK] DECODED BODY:', $data);
 
-        // Log headers
-        Log::info('HEADERS:', $request->headers->all());
+        Log::info('[WEBHOOK] HEADERS:', $request->headers->all());
 
-        Log::info('WEBHOOK MASUK!');
-
-        // Token Validation (pastikan sama seperti yang ada di Xendit Dashboard)
+        // Token Validation
         $token = $request->header('X-CALLBACK-TOKEN');
+        Log::info('[WEBHOOK] Received token: ' . $token);
         if ($token !== config('services.xendit.webhook_token')) {
-            Log::warning('Unauthorized webhook', $data);
+            Log::warning('[WEBHOOK] Unauthorized webhook', $data);
             return response()->json(['status' => 'unauthorized'], 401);
         }
 
-        // Pastikan ada id
         if (!isset($data['id'])) {
-            Log::error('Missing invoice id', $data);
+            Log::error('[WEBHOOK] Missing invoice id', $data);
             return response()->json(['status' => 'missing id'], 400);
         }
 
-        // Cari transaction berdasarkan xendit_id
         $transaction = Transaction::where('xendit_id', $data['id'])->first();
-
         if (!$transaction) {
-            Log::warning('Transaction not found', ['xendit_id' => $data['id']]);
+            Log::warning('[WEBHOOK] Transaction not found', ['xendit_id' => $data['id']]);
             return response()->json(['status' => 'transaction not found'], 404);
         }
 
-        // Update status sesuai Xendit
+        Log::info('[WEBHOOK] Found transaction', ['transaction_id' => $transaction->id]);
+
+        // Update status
         if (isset($data['status'])) {
             switch (strtoupper($data['status'])) {
                 case 'PAID':
                     $transaction->update(['status' => 'paid']);
-                    Log::info('Transaction marked as PAID', ['transaction_id' => $transaction->id]);
+                    Log::info('[WEBHOOK] Transaction marked as PAID', ['transaction_id' => $transaction->id]);
+
+                    // Event broadcast
+                    event(new TransactionPaid($transaction));
+                    Log::info('[WEBHOOK] TransactionPaid event fired', ['transaction_id' => $transaction->id]);
                     break;
 
                 case 'EXPIRED':
                     $transaction->update(['status' => 'expired']);
-                    Log::info('Transaction EXPIRED', ['transaction_id' => $transaction->id]);
+                    Log::info('[WEBHOOK] Transaction EXPIRED', ['transaction_id' => $transaction->id]);
                     break;
 
                 case 'FAILED':
                     $transaction->update(['status' => 'failed']);
-                    Log::info('Transaction FAILED', ['transaction_id' => $transaction->id]);
+                    Log::info('[WEBHOOK] Transaction FAILED', ['transaction_id' => $transaction->id]);
                     break;
             }
         }
@@ -69,32 +70,32 @@ class WebhookController extends Controller
 
     // public function handle(Request $request)
     // {
-    //     // RAW Body
+    //     // Log raw body
     //     Log::info('RAW BODY: ' . $request->getContent());
 
-    //     // JSON decoded (array)
+    //     // JSON decoded body
     //     $data = $request->all();
     //     Log::info('DECODED BODY:', $data);
 
-    //     // Headers
+    //     // Log headers
     //     Log::info('HEADERS:', $request->headers->all());
 
     //     Log::info('WEBHOOK MASUK!');
 
-    //     // Token Validation
+    //     // Token Validation (pastikan sama seperti yang ada di Xendit Dashboard)
     //     $token = $request->header('X-CALLBACK-TOKEN');
     //     if ($token !== config('services.xendit.webhook_token')) {
     //         Log::warning('Unauthorized webhook', $data);
     //         return response()->json(['status' => 'unauthorized'], 401);
     //     }
 
-    //     // --- PERBAIKI PENTING DISINI ---
+    //     // Pastikan ada id
     //     if (!isset($data['id'])) {
     //         Log::error('Missing invoice id', $data);
     //         return response()->json(['status' => 'missing id'], 400);
     //     }
 
-    //     // Cari transaction
+    //     // Cari transaction berdasarkan xendit_id
     //     $transaction = Transaction::where('xendit_id', $data['id'])->first();
 
     //     if (!$transaction) {
@@ -102,13 +103,17 @@ class WebhookController extends Controller
     //         return response()->json(['status' => 'transaction not found'], 404);
     //     }
 
-    //     // Update status
+    //     // Update status sesuai Xendit
     //     if (isset($data['status'])) {
     //         switch (strtoupper($data['status'])) {
     //             case 'PAID':
     //                 $transaction->update(['status' => 'paid']);
+    //                 event(new TransactionPaid($transaction));
     //                 Log::info('Transaction marked as PAID', ['transaction_id' => $transaction->id]);
     //                 break;
+    //                 // $transaction->update(['status' => 'paid']);
+    //                 // Log::info('Transaction marked as PAID', ['transaction_id' => $transaction->id]);
+    //                 // break;
 
     //             case 'EXPIRED':
     //                 $transaction->update(['status' => 'expired']);
@@ -124,6 +129,7 @@ class WebhookController extends Controller
 
     //     return response()->json(['status' => 'ok']);
     // }
+
 
 
 //     public function handle(Request $request)

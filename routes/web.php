@@ -71,7 +71,6 @@ Route::post('/select-table', [TableController::class, 'store'])->name('table.sto
 // ======================
 // WEBHOOK
 // ======================
-Route::post('/webhook/xendit', [WebhookController::class, 'handle'])->name('webhook.xendit');
 
 Route::post('/webhook/xendit', [WebhookController::class, 'handle'])->name('webhook.xendit');
 

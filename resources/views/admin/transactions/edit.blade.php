@@ -30,7 +30,6 @@
             </option>
             @endforeach
         </select>
-        <small class="text-muted">Sebelumnya: {{ $transaction->user->name }}</small>
     </div>
 
     {{-- Payment Method --}}
@@ -76,7 +75,7 @@
                 </option>
                 @endforeach
             </select>
-            <small class="text-muted">Sebelumnya: {{ $item->menu->name ?? '-' }}</small>
+            {{-- <small class="text-muted">Sebelumnya: {{ $item->menu->name ?? '-' }}</small> --}}
         </div>
 
         {{-- Quantity --}}

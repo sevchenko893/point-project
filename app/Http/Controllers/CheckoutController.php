@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\TransactionPaid;
 use Illuminate\Http\Request;
 use App\Models\Cart;
 use App\Models\Transaction;
@@ -9,6 +10,7 @@ use App\Models\TransactionItem;
 use Xendit\Configuration;
 use Xendit\Invoice\InvoiceApi;
 use Illuminate\Support\Facades\Log;
+use PhpParser\Node\Expr\New_;
 
 class CheckoutController extends Controller
 {
@@ -85,6 +87,9 @@ class CheckoutController extends Controller
             ]);
 
             Log::info('Invoice created', ['invoice_id' => $invoice['id'], 'transaction_id' => $transaction->id]);
+
+            // event(new TransactionPaid($transaction));
+            event(new TransactionPaid($transaction));
 
             return redirect($invoice['invoice_url']);
         } catch (\Exception $e) {

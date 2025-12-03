@@ -14,15 +14,13 @@ class WebhookController extends Controller
     public function handle(Request $request)
     {
         Log::info('[WEBHOOK] RAW BODY: ' . $request->getContent());
-
         $data = $request->all();
         Log::info('[WEBHOOK] DECODED BODY:', $data);
-
         Log::info('[WEBHOOK] HEADERS:', $request->headers->all());
 
-        // Token Validation
         $token = $request->header('X-CALLBACK-TOKEN');
         Log::info('[WEBHOOK] Received token: ' . $token);
+
         if ($token !== config('services.xendit.webhook_token')) {
             Log::warning('[WEBHOOK] Unauthorized webhook', $data);
             return response()->json(['status' => 'unauthorized'], 401);
@@ -38,17 +36,13 @@ class WebhookController extends Controller
             Log::warning('[WEBHOOK] Transaction not found', ['xendit_id' => $data['id']]);
             return response()->json(['status' => 'transaction not found'], 404);
         }
-
         Log::info('[WEBHOOK] Found transaction', ['transaction_id' => $transaction->id]);
 
-        // Update status
         if (isset($data['status'])) {
             switch (strtoupper($data['status'])) {
                 case 'PAID':
                     $transaction->update(['status' => 'paid']);
                     Log::info('[WEBHOOK] Transaction marked as PAID', ['transaction_id' => $transaction->id]);
-
-                    // Event broadcast
                     event(new TransactionPaid($transaction));
                     Log::info('[WEBHOOK] TransactionPaid event fired', ['transaction_id' => $transaction->id]);
                     break;

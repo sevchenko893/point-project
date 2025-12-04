@@ -27,15 +27,46 @@ class TransactionPaid implements ShouldBroadcast
         return new Channel('transactions');
     }
 
+    // public function broadcastWith()
+    // {
+    //     $payload = [
+    //         'id' => $this->transaction->id,
+    //         'table_number' => $this->transaction->table_number ?? null,
+    //         'total_amount' => $this->transaction->total_amount,
+    //         'status' => $this->transaction->status,
+    //     ];
+    //     Log::info('[EVENT] TransactionPaid broadcastWith payload', $payload);
+    //     return $payload;
+    // }
+
     public function broadcastWith()
-    {
-        $payload = [
-            'id' => $this->transaction->id,
-            'table_number' => $this->transaction->table_number ?? null,
-            'total_amount' => $this->transaction->total_amount,
-            'status' => $this->transaction->status,
-        ];
-        Log::info('[EVENT] TransactionPaid broadcastWith payload', $payload);
-        return $payload;
-    }
+{
+    return [
+        'id' => $this->transaction->id,
+        'user_name' => $this->transaction->user->name ?? '-',
+        'total_amount' => $this->transaction->total_amount,
+        'payment_method' => $this->transaction->payment_method ?? '-',
+        'status' => $this->transaction->status,
+        'table_number' => $this->transaction->table_number ?? null,
+
+        'menus' => $this->transaction->items->map(function ($item) {
+            return [
+                'menu_name' => $item->menu->name ?? '-',
+                'qty'       => $item->quantity,      // ← PERBAIKAN
+                'price'     => $item->price,
+                'subtotal'  => $item->quantity * $item->price, // ← PERBAIKAN
+            ];
+        }),
+
+        // 'menus' => $this->transaction->items->map(function ($item) {
+        //     return [
+        //         'menu_name' => $item->menu->name ?? '-',
+        //         // 'qty'       => $item->qty,
+        //         'price'     => $item->price,
+        //         'subtotal'  => $item->qty * $item->price,
+        //     ];
+        // }),
+    ];
+}
+
 }

@@ -102,14 +102,15 @@ function refreshTransactionTable(event) {
 
     let html = `
         <tr id="${rowId}">
-            <td>#</td>
-            <td>${event.user_name ?? '-'}</td>
+            <td>New</td>
+            <td>${event.user_name ? event.user_name : '-'}</td>
             <td>Rp ${Number(event.total_amount).toLocaleString('id-ID')}</td>
             <td>${event.payment_method ?? '-'}</td>
             <td>${event.status ?? '-'}</td>
-            <td>
-                <a href="/admin/transactions/${event.id}" class="btn btn-sm btn-info">Detail</a>
-            </td>
+             <td>
+            <a href="/admin/transactions/${event.id}" class="btn btn-sm btn-info">Detail</a>
+            <a href="/admin/transactions/${event.id}/edit" class="btn btn-sm btn-warning">Edit</a>
+        </td>
         </tr>
     `;
 
@@ -123,8 +124,38 @@ function refreshTransactionTable(event) {
 }
 
 // Listen event dari Pusher
+// window.Echo.channel('transactions').listen('TransactionPaid', (e) => {
+//     console.log("🎉 EVENT RECEIVED:", e);
+//     refreshTransactionTable(e);
+// });
+
 window.Echo.channel('transactions').listen('TransactionPaid', (e) => {
     console.log("🎉 EVENT RECEIVED:", e);
+
+    // munculkan alert tanpa diblock browser
+
+    if (e.status === "paid") {
+
+        // format list menu
+        let menuList = "";
+    if (Array.isArray(e.menus) && e.menus.length > 0) {
+        menuList = e.menus
+            .map(m => `- ${m.menu_name} (Qty: ${m.qty})`)
+            .join("\n");
+    } else {
+        menuList = "- Tidak ada menu";
+    }
+
+    setTimeout(() => {
+        alert(
+            "💰 Transaksi baru dibayar!\n\n" +
+            "Meja Nomor: " + (e.table_number ?? '-') + "\n" +
+            "Total: Rp " + Number(e.total_amount).toLocaleString('id-ID') + "\n\n" +
+            "🍽 Menu:\n" + menuList
+        );
+    }, 10);
+}
+
     refreshTransactionTable(e);
 });
 </script>

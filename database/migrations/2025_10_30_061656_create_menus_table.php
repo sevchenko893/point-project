@@ -14,6 +14,7 @@ return new class extends Migration
             // $table->enum('category', ['coffee', 'non-coffee'])->nullable();
             $table->decimal('base_price', 10, 2); // harga dasar (biasanya hot)
             $table->text('description')->nullable();
+            $table->string('photo_path')->nullable();
             $table->enum('status', ['available', 'unavailable'])->default('available');
             $table->timestamps();
         });

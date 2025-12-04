@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', config('app.name', 'Kopi Kita'))</title>
+    <title>@yield('title', config('app.name', 'Point Order'))</title>
 
     {{-- Bootstrap 5 --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -68,7 +68,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark shadow-sm sticky-top">
         <div class="container">
             <a class="navbar-brand" href="{{ url('/') }}">
-                ☕ Kopi Kita
+                ☕ Point Order
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -103,7 +103,7 @@
     {{-- Footer --}}
     <footer class="py-3 text-center">
         <div class="container">
-            <small>&copy; {{ date('Y') }} <strong>Kopi Kita</strong>. Semua hak dilindungi.</small>
+            <small>&copy; {{ date('Y') }} <strong>Point Order</strong>. Semua hak dilindungi.</small>
         </div>
     </footer>
 

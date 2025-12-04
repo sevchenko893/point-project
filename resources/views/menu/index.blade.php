@@ -56,7 +56,7 @@
 
 <div class="container mt-4">
     <header class="text-center mb-4">
-        <h1 class="fw-bold text-dark">Kopi Kita</h1>
+        <h1 class="fw-bold text-dark">Point Order</h1>
         <p class="text-muted">Pilih menu kopi favoritmu</p>
     </header>
 

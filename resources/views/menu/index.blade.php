@@ -24,6 +24,20 @@
         box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     }
 
+    .menu-item img {
+        width: 100%;
+        height: 160px;
+
+        /* ==== FIX FOTO SUPAYA TIDAK TERPOTONG ==== */
+        object-fit: contain;
+        background: #f7f7f7;
+        border-radius: 6px;
+        padding: 5px;
+        /* ========================================= */
+
+        margin-bottom: 10px;
+    }
+
     .menu-item h3 {
         margin: 0 0 10px;
         font-size: 18px;
@@ -64,6 +78,10 @@
         @foreach($menus as $menu)
             <a href="{{ route('menu.show', $menu->id) }}" class="menu-link">
                 <div class="menu-item">
+
+                    {{-- FOTO MENU --}}
+                    <img src="{{ asset($menu->photo_path) }}" alt="{{ $menu->name }}">
+
                     <h3>{{ $menu->name }}</h3>
                     <p>Harga: Rp {{ number_format($menu->base_price, 0, ',', '.') }}</p>
                 </div>

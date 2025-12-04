@@ -14,9 +14,10 @@ class Menu extends Model
         'category_id',
         'base_price',
         'description',
+        'photo_path',
         'status',
     ];
-    
+
     protected $casts = [
         'base_price' => 'decimal:2',
     ];

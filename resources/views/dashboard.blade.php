@@ -24,32 +24,35 @@
         </div>
 
     </div>
+<!-- Chart -->
+<div class="card mt-4 p-4 shadow-sm">
+    <h5 class="mb-3">Penjualan Per Bulan</h5>
+    <canvas id="salesChart" height="100"></canvas>
+</div>
 
-    <!-- Chart -->
-    <div class="card mt-4 p-4 shadow-sm">
-        <h5 class="mb-3">Penjualan Per Bulan</h5>
-        <canvas id="salesChart" height="100"></canvas>
-    </div>
+<!-- Load Chart.js library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <script>
-        const ctx = document.getElementById('salesChart').getContext('2d');
+<script>
+    const ctx = document.getElementById('salesChart').getContext('2d');
 
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: @json($months),
-                datasets: [{
-                    label: 'Total Penjualan',
-                    data: @json($totals),
-                    borderWidth: 3,
-                    tension: 0.4
-                }]
-            },
-            options: {
-                scales: {
-                    y: { beginAtZero: true }
-                }
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: @json($months),
+            datasets: [{
+                label: 'Total Penjualan',
+                data: @json($totals),
+                borderWidth: 3,
+                tension: 0.4
+            }]
+        },
+        options: {
+            scales: {
+                y: { beginAtZero: true }
             }
-        });
-    </script>
+        }
+    });
+</script>
+
 @endsection

@@ -20,7 +20,7 @@
     @method('PUT')
 
     {{-- User --}}
-    <div class="mb-3">
+    {{-- <div class="mb-3">
         <label for="user_id" class="form-label">User</label>
         <select name="user_id" class="form-control">
             <option value="" disabled>Pilih User</option>
@@ -30,8 +30,13 @@
             </option>
             @endforeach
         </select>
-    </div>
+    </div> --}}
 
+    <div class="mb-3">
+        <label for="customer_name" class="form-label">Nama Customer</label>
+        <input type="text" name="customer_name" class="form-control"
+               value="{{ old('customer_name', $transaction->customer_name) }}" required>
+    </div>
     {{-- Payment Method --}}
     <div class="mb-3">
         <label for="payment_method" class="form-label">Payment Method</label>

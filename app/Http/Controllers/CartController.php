@@ -8,53 +8,10 @@ use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
-    /**
-     * Menampilkan semua item di cart untuk meja + device tertentu.
-     */
-    // public function index(Request $request)
-    // {
-    //     $request->validate([
-    //         'table_number' => 'required|string',
-    //         'device_token' => 'required|string',
-    //     ]);
-
-    //     $cartItems = Cart::with('menu')
-    //         ->where('table_number', $request->table_number)
-    //         ->where('device_token', $request->device_token)
-    //         ->get();
-
-    //     // return $cartItems;
-
-    //     $total = $cartItems->sum(fn($item) => $item->price * $item->quantity);
-    //     // return 1;
-    //     return view('cart.index', [
-    //         'table_number' => $request->table_number,
-    //         'device_token' => $request->device_token,
-    //         'total' => $total,
-    //         'cartItems' => $cartItems, // <-- nama variabel "items"
-    //     ]);
-    // }
-
-    //     dd(session()->all());
-    //     public function index($table_number, $device_token)
-    // {
-    //     $cartItems = Cart::with('menu')
-    //         ->where('table_number', $table_number)
-    //         ->where('device_token', $device_token)
-    //         ->get();
-
-    //     $total = $cartItems->sum(fn($item) => $item->price * $item->quantity);
-
-    //     return view('cart.index', [
-    //         'table_number' => $table_number,
-    //         'device_token' => $device_token,
-    //         'cartItems' => $cartItems,
-    //         'total' => $total,
-    //     ]);
-    // }
 
     public function index($table_number, $device_token)
     {
+        // return 1;
         // Simpan ke session
         session([
             'table_number' => $table_number,
@@ -81,8 +38,8 @@ class CartController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request->price;
         $request->validate([
+            'customer_name' => 'required|string',
             'table_number' => 'required|string',
             'device_token' => 'required|string',
             'menu_id' => 'required|exists:menus,id',
@@ -108,6 +65,7 @@ class CartController extends Controller
             // Tambah item baru
             $cartItem = Cart::create([
                 'table_number' => $request->table_number,
+                'customer_name' => $request->customer_name,
                 'device_token' => $request->device_token,
                 'menu_id' => $request->menu_id,
                 'temperature' => $request->temperature,

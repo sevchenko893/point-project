@@ -148,8 +148,10 @@ window.Echo.channel('transactions').listen('TransactionPaid', (e) => {
 
     setTimeout(() => {
         alert(
+
             "💰 Transaksi baru dibayar!\n\n" +
             "Meja Nomor: " + (e.table_number ?? '-') + "\n" +
+            "Nama Pelanggan: " + (e.customer_name ?? '-') + "\n" +
             "Total: Rp " + Number(e.total_amount).toLocaleString('id-ID') + "\n\n" +
             "🍽 Menu:\n" + menuList
         );

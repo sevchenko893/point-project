@@ -10,6 +10,8 @@ class Transaction extends Model
     use HasFactory;
 
     protected $fillable = [
+        'customer_name', // ganti dari user_id
+        'table_number',
         'user_id',
         'xendit_id',
         'total_amount',

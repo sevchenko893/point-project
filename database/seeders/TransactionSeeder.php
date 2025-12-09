@@ -31,6 +31,8 @@ class TransactionSeeder extends Seeder
             // Hapus field yang tidak ada di table
             TransactionItem::create([
                 'transaction_id' => $transaction->id,
+                'table_number' => '1',
+                'customer_name' => 'test', // tambahkan ini
                 'menu_id' => $variant->menu_id,
                 'quantity' => $quantity,
                 'price' => $subtotal,

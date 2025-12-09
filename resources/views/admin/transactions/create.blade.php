@@ -18,7 +18,7 @@
 <form action="{{ route('transactions.store') }}" method="POST">
     @csrf
 
-    <div class="mb-3">
+    {{-- <div class="mb-3">
         <label for="user_id" class="form-label">User</label>
         <select name="user_id" class="form-control">
             <option value="" disabled selected>Pilih User</option>
@@ -26,6 +26,11 @@
             <option value="{{ $user->id }}">{{ $user->name }}</option>
             @endforeach
         </select>
+    </div> --}}
+
+    <div class="mb-3">
+        <label for="customer_name" class="form-label">Nama Customer</label>
+        <input type="text" name="customer_name" class="form-control" value="{{ old('customer_name') }}" required>
     </div>
 
     <div class="mb-3">

@@ -44,6 +44,7 @@ class TransactionPaid implements ShouldBroadcast
     return [
         'id' => $this->transaction->id,
         'user_name' => $this->transaction->user->name ?? '-',
+        'customer_name' => $this->transaction->customer_name ?? '-',
         'total_amount' => $this->transaction->total_amount,
         'payment_method' => $this->transaction->payment_method ?? '-',
         'status' => $this->transaction->status,

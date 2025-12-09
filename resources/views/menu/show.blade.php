@@ -19,6 +19,10 @@
                 <input type="text" id="table_number" name="table_number" class="form-control" placeholder="Input Table Number" required>
             </div> --}}
             {{-- Table Number --}}
+            <div class="mb-3">
+                <label for="customer_name" class="form-label">Name</label>
+                <input type="text" id="customer_name" name="customer_name" class="form-control">
+            </div>
             @if(session('table_number'))
             {{-- Jika sudah ada di session, simpan sebagai hidden --}}
             <input type="hidden" name="table_number" value="{{ session('table_number') }}">

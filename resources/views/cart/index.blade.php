@@ -13,6 +13,7 @@
             <thead class="table-dark">
                 <tr>
                     <th>Menu</th>
+                    <th>Name</th>
                     <th>Opsi</th>
                     <th>Qty</th>
                     <th>Harga</th>
@@ -24,6 +25,8 @@
                 @foreach ($cartItems as $item)
                     <tr>
                         <td>{{ $item->menu->name }}</td>
+                        <td>{{ $item->customer_name }}</td>
+
                         <td>
                             @if($item->temperature) <span class="badge bg-primary">{{ $item->temperature }}</span> @endif
                             @if($item->size) <span class="badge bg-info">{{ $item->size }}</span> @endif
@@ -63,9 +66,11 @@
                 @csrf
                 <input type="hidden" name="table_number" value="{{ $table_number }}">
                 <input type="hidden" name="device_token" value="{{ $device_token }}">
+                <input type="hidden" name="customer_name" value="{{ $cartItems->first()->customer_name ?? '' }}">
                 <button class="btn btn-success btn-lg">Checkout Sekarang</button>
             </form>
         </div>
+
     @endif
 </div>
 @endsection

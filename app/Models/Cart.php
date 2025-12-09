@@ -9,6 +9,7 @@ class Cart extends Model
 {
     protected $fillable = [
         'table_number',
+        'customer_name',
         'device_token',
         'menu_id',
         'temperature',

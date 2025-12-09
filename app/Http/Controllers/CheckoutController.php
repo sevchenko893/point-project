@@ -24,6 +24,7 @@ class CheckoutController extends Controller
 
     public function store(Request $request)
     {
+        // return $request;
         $request->validate([
             'table_number' => 'required|string',
             'device_token' => 'required|string',
@@ -42,6 +43,8 @@ class CheckoutController extends Controller
 
         $transaction = Transaction::create([
             'user_id' => auth()->id(),
+            'customer_name' => $request->customer_name,
+            'table_number' => $request->table_number,
             'total_amount' => $total,
             'payment_method' => 'qris',
             'status' => 'pending',

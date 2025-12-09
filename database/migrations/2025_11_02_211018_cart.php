@@ -12,6 +12,8 @@ return new class extends Migration {
 
             // Nomor meja — wajib diisi
             $table->string('table_number');
+            $table->string('customer_name')->nullable(); // bisa kosong
+
 
             // Token unik per perangkat (disimpan di browser lokal)
             $table->string('device_token')->index();

@@ -15,7 +15,8 @@
     </div>
 @endif
 
-<form action="{{ isset($menu) ? route('menus.update', $menu->id) : route('menus.store') }}" method="POST">
+<form action="{{ isset($menu) ? route('menus.update', $menu->id) : route('menus.store') }}"
+      method="POST" enctype="multipart/form-data">
     @csrf
     @if(isset($menu)) @method('PUT') @endif
 
@@ -27,19 +28,18 @@
     </div>
 
     {{-- CATEGORY --}}
-<div class="mb-3">
-    <label for="category_id" class="form-label">Kategori</label>
-    <select name="category_id" class="form-control" required>
-        <option value="" disabled {{ !isset($menu) ? 'selected' : '' }}>Pilih Kategori</option>
-        @foreach($categories as $category)
-            <option value="{{ $category->id }}"
-                {{ old('category_id', $menu->category_id ?? '') == $category->id ? 'selected' : '' }}>
-                {{ $category->name }}
-            </option>
-        @endforeach
-    </select>
-</div>
-
+    <div class="mb-3">
+        <label for="category_id" class="form-label">Kategori</label>
+        <select name="category_id" class="form-control" required>
+            <option value="" disabled {{ !isset($menu) ? 'selected' : '' }}>Pilih Kategori</option>
+            @foreach($categories as $category)
+                <option value="{{ $category->id }}"
+                    {{ old('category_id', $menu->category_id ?? '') == $category->id ? 'selected' : '' }}>
+                    {{ $category->name }}
+                </option>
+            @endforeach
+        </select>
+    </div>
 
     {{-- BASE PRICE --}}
     <div class="mb-3">
@@ -66,6 +66,19 @@
                 Tidak Tersedia
             </option>
         </select>
+    </div>
+
+    {{-- PHOTO UPLOAD --}}
+    <div class="mb-3">
+        <label for="photo" class="form-label">Foto Menu</label>
+        <input type="file" class="form-control" name="photo">
+
+        @if(isset($menu) && $menu->photo_path)
+            <div class="mt-2">
+                <img src="{{ asset('storage/' . $menu->photo_path) }}"
+                     width="120" class="rounded shadow">
+            </div>
+        @endif
     </div>
 
     <button type="submit" class="btn btn-success">{{ isset($menu) ? 'Update' : 'Simpan' }}</button>

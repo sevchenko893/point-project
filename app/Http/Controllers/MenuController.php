@@ -14,7 +14,9 @@ class MenuController extends Controller
     public function index()
     {
         // Ambil semua menu
-        $menus = Menu::all();
+        $menus = Menu::whereNull('deleted_at')
+            ->orderBy('created_at', 'desc')
+            ->get();
         return view('menu.index', compact('menus'));
     }
 

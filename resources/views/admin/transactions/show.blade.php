@@ -50,6 +50,7 @@
     </thead>
     <tbody>
         @forelse($transaction->items as $item)
+        {{$item}}
         <tr>
             <td>{{ $loop->iteration }}</td>
             <td>{{ $item->menu->name ?? '-' }}</td>

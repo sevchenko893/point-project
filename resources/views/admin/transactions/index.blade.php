@@ -44,7 +44,8 @@
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>User</th>
+                    <th>Name</th>
+                    <th>Table Number</th>
                     <th>Total</th>
                     <th>Payment</th>
                     <th>Status</th>
@@ -55,7 +56,8 @@
                 @forelse($transactions as $t)
                 <tr id="transaction-{{ $t->id }}">
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $t->user->name ?? '-' }}</td>
+                    <td>{{ $t->customer_name ?? '-' }}</td>
+                    <td>{{ $t->table_number ?? '-' }}</td>
                     <td>Rp {{ number_format($t->total_amount,0,',','.') }}</td>
                     <td>{{ ucfirst($t->payment_method ?? '-') }}</td>
                     <td>{{ ucfirst($t->status) }}</td>

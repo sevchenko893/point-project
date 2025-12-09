@@ -5,8 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Transaction;
 use App\Models\TransactionItem;
 use App\Models\Menu;
+use App\Models\MenuPriceOption; // Jika menu price opsi ada
+use App\Models\Size;
+use App\Models\Sugar;
+use App\Models\Temperature;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 
 class AdminTransactionController extends Controller
 {
@@ -24,37 +30,130 @@ class AdminTransactionController extends Controller
     }
 
     public function create()
-    {
-        $users = User::all();
-        $menus = Menu::all();
-        return view('admin.transactions.create', compact('users', 'menus'));
-    }
+{
+
+    $menus = Menu::all();
+    $sizes = Size::all();
+    $temperatures = Temperature::all();
+    $sugars = Sugar::all();
+
+    return view('admin.transactions.create', compact('menus', 'sizes', 'temperatures', 'sugars'));
+}
+
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'user_id'        => 'nullable|exists:users,id',
+    //         'payment_method' => 'nullable|in:cash,card,qris',
+    //         'status'         => 'required|in:pending,paid,cancelled',
+    //         'items'          => 'required|array|min:1',
+    //         'items.*.menu_id' => 'required|exists:menus,id',
+    //         'items.*.quantity'=> 'required|integer|min:1',
+    //         'items.*.price'   => 'required|integer|min:0',
+    //     ]);
+
+    //     $transaction = Transaction::create([
+    //         'user_id' => $request->user_id,
+    //         'total_amount' => array_sum(array_map(fn($i)=> $i['price']*$i['quantity'],$request->items)),
+    //         'payment_method' => $request->payment_method,
+    //         'status' => $request->status,
+    //     ]);
+
+    //     foreach($request->items as $item){
+    //         $transaction->items()->create($item);
+    //     }
+
+    //     return redirect()->route('transactions.index')->with('success', 'Transaksi berhasil ditambahkan!');
+    // }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'user_id'        => 'nullable|exists:users,id',
-            'payment_method' => 'nullable|in:cash,card,qris',
-            'status'         => 'required|in:pending,paid,cancelled',
-            'items'          => 'required|array|min:1',
-            'items.*.menu_id' => 'required|exists:menus,id',
-            'items.*.quantity'=> 'required|integer|min:1',
-            'items.*.price'   => 'required|integer|min:0',
-        ]);
+{
+    // return 1;
+    $request->validate([
+        'customer_name' => 'required|string',
+        'table_number' => 'required|string',
+        'menus' => 'required|array',
+        'menus.*.menu_id' => 'required|exists:menus,id',
+        'menus.*.quantity' => 'required|integer|min:1',
+        'menus.*.size' => 'nullable|string',
+        'menus.*.temperature' => 'nullable|string',
+        'menus.*.sugar_level' => 'nullable|string',
+    ]);
 
-        $transaction = Transaction::create([
-            'user_id' => $request->user_id,
-            'total_amount' => array_sum(array_map(fn($i)=> $i['price']*$i['quantity'],$request->items)),
-            'payment_method' => $request->payment_method,
-            'status' => $request->status,
-        ]);
+    $totalAmount = 0;
 
-        foreach($request->items as $item){
-            $transaction->items()->create($item);
+    // Buat transaksi utama
+    $transaction = Transaction::create([
+        'user_id' => auth()->id(),
+        'customer_name' => $request->customer_name,
+        'table_number' => $request->table_number,
+        'payment_method' => 'cash', // Admin manual
+        'status' => 'paid', // Admin anggap langsung paid
+        'total_amount' => 0, // diupdate nanti
+    ]);
+
+    foreach ($request->menus as $item) {
+
+        $menu = Menu::findOrFail($item['menu_id']);
+
+        // Harga dasar
+        $subtotal = $menu->base_price;
+
+        // Tambah harga size
+        if (!empty($item['size'])) {
+            $size = Size::where('name', $item['size'])->first();
+            if ($size) {
+                $subtotal += $size->price;
+            }
         }
 
-        return redirect()->route('transactions.index')->with('success', 'Transaksi berhasil ditambahkan!');
+        // Tambah harga temperature
+        if (!empty($item['temperature'])) {
+            $temp = Temperature::where('name', $item['temperature'])->first();
+            if ($temp) {
+                $subtotal += $temp->price;
+            }
+        }
+
+        // Tambah harga sugar level
+        if (!empty($item['sugar_level'])) {
+            $sugar = Sugar::where('name', $item['sugar_level'])->first();
+            if ($sugar) {
+                $subtotal += $sugar->price;
+            }
+        }
+
+        // Hitung berdasarkan quantity
+        $subtotal = $subtotal * $item['quantity'];
+
+        // Tambahkan ke total transaksi
+        $totalAmount += $subtotal;
+
+        // Insert item transaksi
+        TransactionItem::create([
+            'transaction_id' => $transaction->id,
+            'menu_id' => $menu->id,
+            'customer_name' => $request->customer_name,
+            'table_number' => $request->table_number,
+            'size' => $item['size'] ?? null,
+            'temperature' => $item['temperature'] ?? null,
+            'sugar_level' => $item['sugar_level'] ?? null,
+            'quantity' => $item['quantity'],
+            'price' => $subtotal,
+        ]);
     }
+
+    // Update total transaksi
+    $transaction->update([
+        'total_amount' => $totalAmount
+    ]);
+
+    return redirect()
+        ->route('transactions.index')
+        ->with('success', 'Transaksi berhasil dibuat!');
+}
+
+
 
     public function edit(Transaction $transaction)
     {

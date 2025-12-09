@@ -86,7 +86,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
         Route::get('transactions', [AdminTransactionController::class, 'index'])->name('transactions.index');
         Route::get('transactions/create', [AdminTransactionController::class, 'create'])->name('transactions.create');
-        Route::post('transactions', [AdminTransactionController::class, 'store'])->name('transactions.store');
+        Route::post('transactions', [AdminTransactionController::class, 'store'])->name('admin.transactions.store');
         Route::get('transactions/{transaction}/edit', [AdminTransactionController::class, 'edit'])->name('transactions.edit');
         Route::put('transactions/{transaction}', [AdminTransactionController::class, 'update'])->name('transactions.update');
         Route::delete('transactions/{transaction}', [AdminTransactionController::class, 'destroy'])->name('transactions.destroy');

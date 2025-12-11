@@ -117,8 +117,6 @@ class CartController extends Controller
     {
         $cart->delete();
 
-        return response()->json([
-            'message' => 'Item berhasil dihapus'
-        ]);
+        return redirect('/');
     }
 }

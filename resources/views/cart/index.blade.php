@@ -23,7 +23,7 @@
             </thead>
             <tbody>
                 @foreach ($cartItems as $item)
-                    <tr>
+                    <tr data-row="{{ $item->id }}">
                         <td>{{ $item->menu->name }}</td>
                         <td>{{ $item->customer_name }}</td>
 
@@ -33,18 +33,35 @@
                             @if($item->ice_level) <span class="badge bg-success">{{ $item->ice_level }}</span> @endif
                             @if($item->sugar_level) <span class="badge bg-warning">{{ $item->sugar_level }}</span> @endif
                         </td>
+
+                        <!-- QTY AJAX FIELD -->
                         <td>
-                            <form action="{{ route('cart.update', $item->id) }}" method="POST" class="d-flex align-items-center">
-                                @csrf
-                                @method('PUT')
-                                <input type="number" name="quantity" value="{{ $item->quantity }}" min="1" class="form-control form-control-sm me-2" style="width: 70px;">
-                                <button class="btn btn-sm btn-primary">Update</button>
-                            </form>
+                            <div class="d-flex align-items-center">
+                                <input
+                                    type="number"
+                                    min="1"
+                                    value="{{ $item->quantity }}"
+                                    class="form-control form-control-sm me-2 qty-input"
+                                    style="width: 70px;"
+                                    data-id="{{ $item->id }}"
+                                    data-price="{{ $item->price }}"
+                                >
+                                <button class="btn btn-sm btn-primary update-btn" data-id="{{ $item->id }}">
+                                    Update
+                                </button>
+                            </div>
                         </td>
+
                         <td>Rp {{ number_format($item->price, 0, ',', '.') }}</td>
-                        <td>Rp {{ number_format($item->price * $item->quantity, 0, ',', '.') }}</td>
+
+                        <!-- TOTAL PER ITEM -->
+                        <td class="item-total">
+                            Rp {{ number_format($item->price * $item->quantity, 0, ',', '.') }}
+                        </td>
+
                         <td>
-                            <form action="{{ route('cart.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Hapus item ini?')">
+                            <form action="{{ route('cart.destroy', $item->id) }}" method="POST"
+                                  onsubmit="return confirm('Hapus item ini?')">
                                 @csrf
                                 @method('DELETE')
                                 <button class="btn btn-sm btn-danger">Hapus</button>
@@ -53,10 +70,13 @@
                     </tr>
                 @endforeach
             </tbody>
+
             <tfoot class="table-light">
                 <tr>
                     <th colspan="4" class="text-end">Total:</th>
-                    <th colspan="2">Rp {{ number_format($total, 0, ',', '.') }}</th>
+                    <th colspan="2" id="cart-total">
+                        Rp {{ number_format($total, 0, ',', '.') }}
+                    </th>
                 </tr>
             </tfoot>
         </table>
@@ -73,4 +93,57 @@
 
     @endif
 </div>
+
+
+{{-- ================== AJAX UPDATE SCRIPT ================== --}}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const updateButtons = document.querySelectorAll('.update-btn');
+
+    updateButtons.forEach(btn => {
+        btn.addEventListener('click', async function () {
+
+            const id = this.dataset.id;
+            const row = document.querySelector(`tr[data-row="${id}"]`);
+            const qtyInput = row.querySelector('.qty-input');
+            const price = parseInt(qtyInput.dataset.price);
+            const quantity = qtyInput.value;
+
+            const response = await fetch(`/cart/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ quantity })
+            });
+
+            const data = await response.json();
+
+            // Update total per item
+            const totalCell = row.querySelector('.item-total');
+            totalCell.textContent = "Rp " + (price * quantity).toLocaleString("id-ID");
+
+            // Update total keseluruhan
+            updateCartTotal();
+        });
+    });
+
+    function updateCartTotal() {
+        let total = 0;
+
+        document.querySelectorAll('.qty-input').forEach(input => {
+            const price = parseInt(input.dataset.price);
+            const qty = parseInt(input.value);
+            total += price * qty;
+        });
+
+        document.getElementById('cart-total').textContent =
+            "Rp " + total.toLocaleString("id-ID");
+    }
+
+});
+</script>
+
 @endsection

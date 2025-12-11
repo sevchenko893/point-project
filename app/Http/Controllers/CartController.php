@@ -117,6 +117,15 @@ class CartController extends Controller
     {
         $cart->delete();
 
-        return redirect('/');
+        // Cek apakah masih ada item di cart (berdasarkan table_number)
+        $remaining = Cart::where('table_number', $cart->table_number)->count();
+
+        if ($remaining == 0) {
+            return redirect('/'); // kalau kosong balik ke home
+        }
+
+        // Kalau masih ada item, tetap di halaman cart
+        return redirect()->back();
     }
+
 }

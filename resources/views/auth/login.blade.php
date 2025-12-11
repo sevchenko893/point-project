@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
 
-    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
@@ -50,6 +49,14 @@
 
                 <h3 class="mb-4 text-center fw-bold">Login</h3>
 
+                {{-- ALERT ERROR LOGIN --}}
+                @if ($errors->any())
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ $errors->first() }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+
                 <form method="POST" action="/login">
                     @csrf
 
@@ -77,6 +84,10 @@
                         Login
                     </button>
 
+                    <a href="/register" class="btn btn-outline-dark w-100 btn-login mt-2">
+                        Register
+                    </a>
+
                 </form>
 
             </div>
@@ -84,6 +95,8 @@
 
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

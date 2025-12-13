@@ -29,4 +29,19 @@ class TransactionItem extends Model
     {
         return $this->belongsTo(Menu::class);
     }
+
+    public function sizeOption()
+    {
+        return $this->belongsTo(Size::class, 'size');
+    }
+
+    public function temperatureOption()
+    {
+        return $this->belongsTo(Temperature::class, 'temperature');
+    }
+
+    public function sugarOption()
+    {
+        return $this->belongsTo(Sugar::class, 'sugar_level');
+    }
 }

@@ -53,10 +53,18 @@
 <div class="content">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>Daftar Transaksi</h2>
-        <a href="{{ route('transactions.create') }}" class="btn btn-primary">
-            Tambah Transaksi
-        </a>
+
+        <div class="d-flex gap-2">
+            <a href="{{ route('transactions.create') }}" class="btn btn-primary">
+                Tambah Transaksi
+            </a>
+
+            <a href="{{ route('transactions.export') }}" class="btn btn-success">
+                Export Transaksi
+            </a>
+        </div>
     </div>
+
 
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>

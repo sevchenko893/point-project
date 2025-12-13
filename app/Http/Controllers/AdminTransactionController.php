@@ -12,6 +12,8 @@ use App\Models\Temperature;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Exports\TransactionsExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class AdminTransactionController extends Controller
@@ -194,4 +196,13 @@ class AdminTransactionController extends Controller
         $transaction->delete();
         return redirect()->route('transactions.index')->with('success', 'Transaksi berhasil dihapus!');
     }
+
+    public function export()
+{
+    return Excel::download(
+        new TransactionsExport(),
+        'transactions_' . now()->format('Ymd_His') . '.xlsx'
+    );
+}
+
 }

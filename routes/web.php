@@ -92,6 +92,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::delete('transactions/{transaction}', [AdminTransactionController::class, 'destroy'])->name('transactions.destroy');
         // Tambahkan route detail
         Route::get('transactions/{transaction}', [AdminTransactionController::class, 'show'])->name('transactions.show');
+        Route::get('/admin/transactions/export',
+    [AdminTransactionController::class, 'export']
+)->name('transactions.export');
+
 
  Route::prefix('menus')->group(function () {
             Route::get('/', [AdminMenuController::class, 'index'])->name('menus.index');

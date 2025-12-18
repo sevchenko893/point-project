@@ -13,11 +13,21 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
+
+            // Nama orang tidak panjang
+            $table->string('name', 50);
+
+            // Email max RFC 254, tapi 100 cukup & umum
+            $table->string('email', 100)->unique();
+
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
+
+            // Hash password (bcrypt / argon) WAJIB panjang
+            $table->string('password', 255);
+
+            // Default Laravel = 100
+            $table->string('remember_token', 100)->nullable();
+
             $table->timestamps();
         });
     }

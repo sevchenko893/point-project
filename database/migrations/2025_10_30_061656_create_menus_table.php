@@ -9,13 +9,25 @@ return new class extends Migration
     {
         Schema::create('menus', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->foreignId('category_id')->constrained()->cascadeOnDelete();
-            // $table->enum('category', ['coffee', 'non-coffee'])->nullable();
-            $table->bigInteger('base_price');
+
+            // Nama menu max ±60 karakter
+            $table->string('name', 60);
+
+            $table->foreignId('category_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
+            // Harga < 1 juta → INT lebih efisien
+            $table->integer('base_price');
+
             $table->text('description')->nullable();
-            $table->string('photo_path')->nullable();
-            $table->enum('status', ['available', 'unavailable'])->default('available');
+
+            // Path relatif gambar
+            $table->string('photo_path', 150)->nullable();
+
+            $table->enum('status', ['available', 'unavailable'])
+                ->default('available');
+
             $table->timestamps();
         });
 

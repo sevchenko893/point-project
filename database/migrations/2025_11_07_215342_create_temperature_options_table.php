@@ -10,10 +10,15 @@ return new class extends Migration
     {
         Schema::create('temperature_options', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // contoh: Hot / Ice
-            $table->decimal('extra_price', 10, 2)->default(0); // tambahan harga
+
+            // Hot / Ice
+            $table->string('name', 10);
+
+            $table->decimal('extra_price', 10, 2)->default(0);
+
             $table->timestamps();
         });
+
     }
 
     public function down(): void

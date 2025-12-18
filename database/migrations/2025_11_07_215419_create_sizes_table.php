@@ -10,8 +10,13 @@ return new class extends Migration
     {
         Schema::create('sizes', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // contoh: Normal / Large
+
+            // Normal / Large / Extra Large
+            $table->string('name', 30);
+
+            // Tambahan harga per size
             $table->decimal('extra_price', 10, 2)->default(0);
+
             $table->timestamps();
         });
     }

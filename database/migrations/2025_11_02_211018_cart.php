@@ -10,34 +10,29 @@ return new class extends Migration {
         Schema::create('carts', function (Blueprint $table) {
             $table->id();
 
-            // Nomor meja — wajib diisi
-            $table->string('table_number');
-            $table->string('customer_name')->nullable(); // bisa kosong
+            $table->string('table_number', 10);
+            $table->string('customer_name', 100)->nullable();
 
+            $table->string('device_token', 100)->index();
 
-            // Token unik per perangkat (disimpan di browser lokal)
-            $table->string('device_token')->index();
-
-            // Menu yang dipilih
             $table->foreignId('menu_id')
-                  ->constrained()
-                  ->onDelete('cascade');
+                ->constrained()
+                ->cascadeOnDelete();
 
-            // Custom options
-            $table->string('temperature')->nullable();
-            $table->string('size')->nullable();
-            $table->string('ice_level')->nullable();
-            $table->string('sugar_level')->nullable();
+            $table->string('temperature', 10)->nullable();
+            $table->string('size', 20)->nullable();
+            $table->string('ice_level', 20)->nullable();
+            $table->string('sugar_level', 20)->nullable();
 
-            // Jumlah dan harga
             $table->integer('quantity')->default(1);
             $table->decimal('price', 10, 2)->default(0);
 
             $table->timestamps();
 
-            // Pastikan satu perangkat tidak duplikat item menu yang sama
             $table->unique(['device_token', 'menu_id', 'table_number']);
         });
+
+
     }
 
     public function down(): void

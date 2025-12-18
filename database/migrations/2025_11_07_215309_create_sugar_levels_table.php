@@ -10,10 +10,15 @@ return new class extends Migration
     {
         Schema::create('sugar_levels', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // contoh: Normal / Less Sugar
+
+            // Normal, Less Sugar, No Sugar
+            $table->string('name', 30);
+
             $table->decimal('extra_price', 10, 2)->default(0);
+
             $table->timestamps();
         });
+
     }
 
     public function down(): void
